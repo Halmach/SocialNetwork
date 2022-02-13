@@ -31,10 +31,10 @@ namespace SocialNetwork.PLL.Views
             {
                 User user = userService.Authenticate(authenticationData);
                 SuccessMessage.Show("Вы успешно вошли в социальную сеть! Добро пожаловать " + user.FirstName);
+                Program.userMenuView.Show(user);
             }
             catch (WrongPasswordException)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
                 AlertMessage.Show("Пароль не корректный!");
             }
             catch (UserNotFoundException)
