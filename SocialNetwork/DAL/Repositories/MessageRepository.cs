@@ -9,7 +9,7 @@ namespace SocialNetwork.DAL.Repositories
     {
         public int Create(MessageEntity messageEntity)
         {
-            return Execute(@"insert into messages(content,sender_id,reciplent_id)
+            return Execute(@"insert into messages(content,sender_id,recipient_id)
                     values(:content,:sender_id,:recipient_id)",messageEntity); 
         }
 
@@ -20,7 +20,7 @@ namespace SocialNetwork.DAL.Repositories
 
         public IEnumerable<MessageEntity> FindByRecipientId(int recipientId)
         {
-            return Query<MessageEntity>("select * from messages where recipient_id =:recipient_id", new { recipientId = recipientId});
+            return Query<MessageEntity>("select * from messages where recipient_id =:recipient_id", new { recipient_id = recipientId});
         }
 
         public IEnumerable<MessageEntity> FindBySenderId(int senderId)

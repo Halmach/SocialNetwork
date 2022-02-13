@@ -2,20 +2,23 @@
 using SocialNetwork.BLL.Models;
 using SocialNetwork.BLL.Services;
 using System;
+using System.Linq;
 
 namespace SocialNetwork
 {
     class Program
     {
         public static UserService userService = new UserService();
+        public static MessageService messService = new MessageService();
         static void Main(string[] args)
         {
            Console.WriteLine("Добро пожаловать в социальную сеть.");
-
-           while(true) 
+            bool authenticationDone = false;
+           while (true) 
            { 
                 Console.WriteLine("Войти в профиль (нажмите 1):");
                 Console.WriteLine("Зарегистрироваться (нажмите 2)");
+                Console.WriteLine("Выйти из программы (нажмите 3)");
 
                 switch (Console.ReadLine().Trim().ToLower())
                 {
@@ -35,15 +38,18 @@ namespace SocialNetwork
 
                                 Console.ForegroundColor = ConsoleColor.Green;
                                 Console.WriteLine("Вы успешно вошли в социальную сеть! Добро пожаловать {0}", user.FirstName);
+                                authenticationDone = true;
                                 Console.ForegroundColor = ConsoleColor.White;
 
-                                while (true)
+                                while (authenticationDone)
                                 {
                                     Console.WriteLine("Просмотреть информацию о моем профиле (нажмите 1)");
                                     Console.WriteLine("Редактировать мой профиль (нажмите 2)");
                                     Console.WriteLine("Добавить в друзья (нажмите 3)");
                                     Console.WriteLine("Напишите сообщение (нажмите 4)");
-                                    Console.WriteLine("Выйти из профиля (нажмите 5)");
+                                    Console.WriteLine("Посмотреть список исходящих (нажмите 5)");
+                                    Console.WriteLine("Посмотреть список входящих (нажмите 6)");
+                                    Console.WriteLine("Выйти из профиля (нажмите 7)");
 
                                     switch (Console.ReadLine().Trim().ToLower())
                                     {
@@ -87,6 +93,89 @@ namespace SocialNetwork
                                                 break;
 
                                             }
+                                        case "4":
+                                            {
+                                                var sendingMessage = new SendingMessage();
+
+                                                Console.Write("Введите почтовый адрес пользователя:");
+                                                sendingMessage.RecipientEmail = Console.ReadLine();
+
+                                                Console.Write("Введите текст сообщения (не больше 5000 символов):");
+                                                sendingMessage.Content = Console.ReadLine();
+
+                                                sendingMessage.Sender_id = user.Id;
+
+                                                try
+                                                {
+                                                    messService.SendMessage(sendingMessage);
+
+                                                    Console.ForegroundColor = ConsoleColor.Green;
+                                                    Console.WriteLine("Сообщение отправлено!");
+                                                    Console.ForegroundColor = ConsoleColor.White;
+                                                }
+                                                catch (ArgumentNullException)
+                                                {
+                                                    Console.ForegroundColor = ConsoleColor.Red;
+                                                    Console.WriteLine("Ошибка: Введите текст сообщения!");
+                                                    Console.ForegroundColor = ConsoleColor.White;
+                                                }
+                                                catch (ArgumentOutOfRangeException)
+                                                {
+                                                    Console.ForegroundColor = ConsoleColor.Red;
+                                                    Console.WriteLine("Ошибка: Сообщение превысело 5000 символов!");
+                                                    Console.ForegroundColor = ConsoleColor.White;
+                                                }
+                                                catch (UserNotFoundException)
+                                                {
+                                                    Console.ForegroundColor = ConsoleColor.Red;
+                                                    Console.WriteLine("Ошибка: Пользователя с таким почтовым адресом не существует!");
+                                                    Console.ForegroundColor = ConsoleColor.White;
+                                                }
+                                                break;
+                                            }
+                                        case "5":
+                                            {
+                                                Console.WriteLine("Список исходящих сообщений");
+                                                var outMessages = messService.GetOutMessageById(user.Id);
+
+                                                if (outMessages.ToList().Count() == 0)
+                                                {
+                                                    Console.WriteLine("Сообщений нет");
+                                                    continue;
+                                                }
+
+                                                outMessages.ToList().ForEach( m =>
+                                                  {
+                                                      Console.WriteLine("Кому:" + m.RecipientEmail);
+                                                      Console.WriteLine("Текст сообщения:" + m.Content);
+                                                  });
+
+                                                break;
+                                            }
+                                        case "6":
+                                            {
+                                                Console.WriteLine("Список входящих сообщений");
+                                                var outMessages = messService.GetInComingMessageById(user.Id);
+
+                                                if (outMessages.ToList().Count() == 0)
+                                                {
+                                                    Console.WriteLine("Сообщений нет");
+                                                    continue;
+                                                }
+
+                                                outMessages.ToList().ForEach(m =>
+                                                {
+                                                    Console.WriteLine("От кого:" + m.SenderEmail);
+                                                    Console.WriteLine("Текст сообщения:" + m.Content);
+                                                });
+
+                                                break;
+                                            }
+                                        case "7":
+                                            {
+                                                authenticationDone = false; break;
+                                            }
+
                                     }
                                 }
                             }
@@ -149,6 +238,11 @@ namespace SocialNetwork
                             }
 
                             break;
+                        }
+
+                    case "3":
+                        {
+                            return;
                         }
                 }
 
