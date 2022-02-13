@@ -37,7 +37,7 @@ namespace SocialNetwork.BLL.Services
                 recipient_id = findRecipient.id
             };
 
-            this.messageRepository.Create(messageEntity);
+            if (this.messageRepository.Create(messageEntity) == 0) throw new Exception();
         }
 
         public IEnumerable<Message> GetInComingMessageById(int sender)

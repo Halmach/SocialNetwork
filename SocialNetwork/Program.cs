@@ -1,6 +1,7 @@
 ﻿using SocialNetwork.BLL.Exceptions;
 using SocialNetwork.BLL.Models;
 using SocialNetwork.BLL.Services;
+using SocialNetwork.PLL.Views;
 using System;
 using System.Linq;
 
@@ -8,11 +9,20 @@ namespace SocialNetwork
 {
     class Program
     {
-        public static UserService userService = new UserService();
-        public static MessageService messService = new MessageService();
+        static UserService userService = new UserService();
+        static MessageService messService = new MessageService();
+
+        public static AuthenticationView authenticationView;
+        public static RegistrationView registrationView;
+
         static void Main(string[] args)
         {
+
            Console.WriteLine("Добро пожаловать в социальную сеть.");
+
+           authenticationView = new AuthenticationView(userService);
+           registrationView = new RegistrationView(userService);
+
             bool authenticationDone = false;
            while (true) 
            { 
