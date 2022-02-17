@@ -40,6 +40,8 @@ namespace SocialNetwork
             friendsShowingView = new FriendsShowingView(friendService);
             friendsAddingView = new FriendsAddingView(friendService);
 
+      
+
             bool exit = false;
             while(!exit)
             {
