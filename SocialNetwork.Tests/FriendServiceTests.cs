@@ -17,13 +17,11 @@ namespace SocialNetwork.Tests
     class FriendServiceTests
     {
         [Test]
-        public void FindAllByUserIdMustReturnAllFriendsOfUser()
+        public void GetAllFriendsByIdMustReturnTrue()
         {
             var friendService = new FriendService();
             var userId = 3;
             Assert.That(friendService.GetAllFriendsById(userId).Any(friend => friend.Email == "large000@yandex.ru")); 
-          //  Console.WriteLine(friendService.GetAllFriendsById(4).ToList().Count());
-          //  Assert.That(true);
         }
     }
 }
